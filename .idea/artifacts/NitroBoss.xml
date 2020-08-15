@@ -1,0 +1,6 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="NitroBoss">
+    <output-path>$USER_HOME$/Desktop/Test Server/plugins</output-path>
+    <root id="archive" name="NitroBoss.jar" />
+  </artifact>
+</component>
