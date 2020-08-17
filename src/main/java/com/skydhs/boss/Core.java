@@ -1,4 +1,10 @@
 package com.skydhs.boss;
 
-public class Core {
+import org.bukkit.plugin.java.JavaPlugin;
+
+public class Core extends JavaPlugin {
+
+    @Override
+    public void onEnable() {
+    }
 }

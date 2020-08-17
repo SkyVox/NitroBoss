@@ -1,0 +1,15 @@
+name: ${project.name}
+version: ${project.version}
+description: ${project.description}
+author: SkyVox_
+website: "http://www.skydhs.com"
+
+# Dependencies.
+# Plugin won't enable without those plugins listed below.
+#depend: {}
+
+# Soft dependencies.
+#softdepend: {}
+
+# Main class.
+main: com.skydhs.boss.Core
