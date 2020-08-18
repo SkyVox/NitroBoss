@@ -5,12 +5,14 @@ import com.mojang.authlib.properties.Property;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.Validate;
 import org.bukkit.ChatColor;
+import org.bukkit.Color;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.inventory.meta.LeatherArmorMeta;
 import org.bukkit.inventory.meta.SkullMeta;
 
 import java.lang.reflect.Field;
@@ -457,6 +459,36 @@ public class ItemBuilder implements Cloneable {
     }
 
     /**
+     * Change the leather armor color
+     * using RGB color.
+     *
+     * @param red Red amount
+     * @param green Green amount
+     * @param blue Blue amount
+     * @return {@link ItemBuilder}
+     */
+    public ItemBuilder withColor(int red, int green, int blue) {
+        return withColor(Color.fromRGB(red, green, blue));
+    }
+
+    /**
+     * Change the leather armor color.
+     *
+     * @param color Color to be set.
+     * @return {@link ItemBuilder}
+     */
+    public ItemBuilder withColor(Color color) {
+        if (!StringUtils.contains(item.getType().toString(), "LEATHER")) return this;
+
+        LeatherArmorMeta meta = (LeatherArmorMeta) item.getItemMeta();
+        if (meta == null) return this;
+
+        meta.setColor(color);
+        item.setItemMeta(meta);
+        return this;
+    }
+
+    /**
      * Build the current itemStack
      * and replace the given placeholders.
      *
@@ -558,6 +590,13 @@ public class ItemBuilder implements Cloneable {
             if (file.contains(where + ".name")) {
                 String name = ChatColor.translateAlternateColorCodes('&', file.getString(where + ".name"));
                 ret.withName(applyPlaceholder(name, placeholders, replacers));
+            }
+
+            if (file.contains(where + ".color")) {
+                int red = file.getInt(where + ".color.r");
+                int green = file.getInt(where + ".color.g");
+                int blue = file.getInt(where + ".color.b");
+                ret.withColor(red, green, blue);
             }
 
             if (file.contains(where + ".lore")) {

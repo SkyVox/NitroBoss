@@ -1,31 +1,37 @@
 package com.skydhs.boss.boss;
 
-import com.skydhs.boss.nms.EntityBossArmorStand;
-import com.skydhs.boss.nms.EntityBossSlime;
-import net.minecraft.server.v1_8_R3.NBTTagCompound;
-import net.minecraft.server.v1_8_R3.World;
-import org.bukkit.craftbukkit.v1_8_R3.CraftWorld;
-import org.bukkit.craftbukkit.v1_8_R3.entity.CraftLivingEntity;
-import org.bukkit.event.entity.CreatureSpawnEvent;
+import com.skydhs.boss.ArmorPosition;
+import com.skydhs.boss.BossSettings;
+import com.skydhs.boss.EntityManager;
+import com.skydhs.boss.boss.effects.BossEffect;
+import net.minecraft.server.v1_8_R3.Vector3f;
+import org.bukkit.Location;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.LinkedHashSet;
+import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 public class EntityBoss extends Boss {
     private static final Set<EntityBoss> registered_bosses = new LinkedHashSet<>(16);
 
-    private org.bukkit.World world;
-    private EntityBossArmorStand armorStand;
-    private EntityBossSlime slime;
-
     // Boss information.
+    private String displayName;
     private double maxHealth;
+    private BossEffect[] effects;
+    private Map<ArmorPosition, ItemStack> armor;
+    private ItemStack spawnEgg;
 
-    public EntityBoss(org.bukkit.World world) {
-        this.world = world;
-        this.armorStand = new EntityBossArmorStand(world);
-        this.slime = new EntityBossSlime(world);
+    public EntityBoss(String displayName, double maxHealth, BossEffect[] effects, Map<ArmorPosition, ItemStack> armor, ItemStack spawnEgg) {
+        this.displayName = displayName;
+        this.maxHealth = maxHealth;
+        this.effects = effects;
+        this.armor = armor;
+        this.spawnEgg = spawnEgg;
 
         addBoss();
     }
@@ -34,71 +40,67 @@ public class EntityBoss extends Boss {
         EntityBoss.registered_bosses.add(this);
     }
 
-    public org.bukkit.World getWorld() {
-        return world;
-    }
-
-    public EntityBossArmorStand getArmorStand() {
-        return armorStand;
-    }
-
-    public EntityBossSlime getSlime() {
-        return slime;
+    public String getDisplayName() {
+        return displayName;
     }
 
     public double getMaxHealth() {
         return maxHealth;
     }
 
-    public void die() {
-        // TODO. Kill this boss.
+    public BossEffect[] getEffects() {
+        return effects;
+    }
+
+    public void applyEffect(final PlayerBoss boss) {
+        if (effects == null || effects.length <= 0) return;
+
+        final Location location = boss.getBossLocation();
+        int radius = BossSettings.APPLY_EFFECTS_RADIUS;
+        Set<Entity> entities = location.getWorld().getNearbyEntities(location, radius, radius, radius).stream().filter(Player.class::isInstance).collect(Collectors.toSet());
+
+        int[] positions = new int[] { 360, 0 };
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                if (boss.isDied()) {
+                    cancel();
+                } else {
+                    if (positions[1] >= 35) {
+                        if (positions[0] >= 360) {
+                            positions[0] = 0;
+                            positions[1] = 0;
+                            cancel();
+                            return;
+                        }
+                        positions[0]+=1;
+                    } else {
+                        positions[1]++;
+                        positions[0]--;
+                    }
+
+                    // Play the arm animation.
+                    boss.getArmorStand().setRightArmPose(new Vector3f(positions[0], 0, 0));
+                }
+            }
+        }.runTaskTimerAsynchronously(EntityManager.getInstance().getCore(), 1, 1);
+
+        if (entities != null && entities.size() > 0) {
+            for (BossEffect effect : getEffects()) {
+                if (effect.isLuck()) {
+                    effect.apply(entities, boss.getArmorStand().getBukkitEntity());
+                }
+            }
+        }
+    }
+
+    public Map<ArmorPosition, ItemStack> getArmor() {
+        return armor;
     }
 
     @Override
     public ItemStack getSpawnEgg() {
-        return null; // TODO.
-    }
-
-    public boolean spawnNMSBoss(double x, double y, double z, float yaw, float pitch) {
-        try {
-            World nmsWorld = ((CraftWorld) world).getHandle();
-            this.armorStand = new EntityBossArmorStand(world);
-            this.slime = new EntityBossSlime(world);
-
-            // Change some entity settings.
-            armorStand.setLocation(x, y, z, yaw, pitch);
-            slime.setLocation(x, y-0.25D, z, yaw, pitch);
-            ((CraftLivingEntity) armorStand.getBukkitEntity()).setRemoveWhenFarAway(false);
-            ((CraftLivingEntity) slime.getBukkitEntity()).setRemoveWhenFarAway(false);
-            slime.setSize(1);
-            slime.setInvisible(true);
-            armorStand.setBasePlate(false);
-            armorStand.setGravity(false);
-            setNoAI();
-
-            // Then, add those entities to the world.
-            nmsWorld.addEntity(armorStand, CreatureSpawnEvent.SpawnReason.CUSTOM);
-            nmsWorld.addEntity(slime, CreatureSpawnEvent.SpawnReason.CUSTOM);
-
-            // Set armor stand as a passenger of this slime.
-            slime.getBukkitEntity().setPassenger(armorStand.getBukkitEntity());
-
-            // This Boss has been successfully spawned.
-            return true;
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-        return true;
-    }
-
-    private void setNoAI() {
-        NBTTagCompound tag = slime.getNBTTag();
-        if (tag == null) tag = new NBTTagCompound();
-
-        // Change the entity AI.
-        tag.setInt("NoAI", 1);
-        slime.c(tag);
-        slime.f(tag);
+        return spawnEgg;
     }
 
     public static Set<EntityBoss> getRegisteredBosses() {

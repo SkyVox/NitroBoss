@@ -1,0 +1,79 @@
+Settings:
+  apply-effect-radius: 4
+
+Bosses:
+  beast:
+    display-name: "&bBeast &c%current_health%&7/&c%max_health%"
+    health: 150000
+    # Os efeitos listados abaixo,
+    # são os efeitos disponíveis para
+    # esse boss.
+    effects:
+      # Efeitos que o boss pode aplicar no jogador.
+      # Efeitos disponíveis: { DAMAGE, POISON, BLINDNESS, SLAP }!
+      DAMAGE:
+        chance: 10 # 10% de chance desse efeito acontecer.
+        damage: 0.5 # Sempre que for aplicado esse efeito, será descontado esse valor da vida do jogador.
+      POISON:
+        chance: 5
+        damage: 0.01
+        # Duração do efeito.
+        time: 3 # Em segundos
+        amplifier: 2
+      BLINDNESS:
+        chance: 35
+        damage: 0.01
+        time: 3 # Em segundos
+        amplifier: 2
+      SLAP:
+        chance: 15
+        amplifier: 3
+    boss-armor:
+      0:
+        type: "STICK"
+        name: "&7"
+        lore: {}
+        armor-position: "HAND" # ArmorStand vai segurar este item na mão.
+      1:
+        type: "SKULL_ITEM:3"
+        owner: "hypixel"
+        name: "&7"
+        lore: {}
+        armor-position: "HELMET" # Esse item fica na cabeça do ArmorStand.
+      2:
+        type: "LEATHER_CHESTPLATE"
+        name: "&7"
+        lore: {}
+        color:
+          r: 255
+          g: 0
+          b: 0
+        armor-position: "CHESTPLATE" # Peitoral do ArmorStand.
+      3:
+        type: "LEATHER_LEGGINGS"
+        name: "&7"
+        lore: {}
+        color:
+          r: 255
+          g: 0
+          b: 0
+        armor-position: "LEGGINGS" # Calça do ArmorStand.
+      4:
+        type: "LEATHER_BOOTS"
+        name: "&7"
+        lore: {}
+        color:
+          r: 255
+          g: 0
+          b: 0
+        armor-position: "BOOTS" # Botas do ArmorStand.
+    spawn-egg:
+      type: "SKULL_ITEM"
+      owner: "hypixel"
+      name: "&7Boss - hypixel"
+      lore:
+        - ''
+        - '&7Clique no chão para nascer'
+        - 'esse boss!'
+        - ''
+        - '&7Dificuldade: &fFácil'

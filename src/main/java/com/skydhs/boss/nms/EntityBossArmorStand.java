@@ -3,12 +3,16 @@ package com.skydhs.boss.nms;
 import com.skydhs.boss.utils.CustomEntityRegistry;
 import net.minecraft.server.v1_8_R3.DamageSource;
 import net.minecraft.server.v1_8_R3.EntityArmorStand;
+import net.minecraft.server.v1_8_R3.Vector3f;
 import org.bukkit.craftbukkit.v1_8_R3.CraftWorld;
 
 public class EntityBossArmorStand extends EntityArmorStand {
 
     public EntityBossArmorStand(org.bukkit.World world) {
         super(((CraftWorld) world).getHandle());
+
+        this.setLeftArmPose(new Vector3f(0, 0, 0));
+        this.setRightArmPose(new Vector3f(360, 0, 0));
     }
 
     @Override

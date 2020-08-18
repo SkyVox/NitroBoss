@@ -4,6 +4,7 @@ import com.skydhs.boss.boss.EntityBoss;
 import com.skydhs.boss.boss.PlayerBoss;
 import com.skydhs.boss.nms.EntityBossArmorStand;
 import com.skydhs.boss.nms.EntityBossSlime;
+import com.skydhs.boss.utils.nbt.NBTItem;
 import org.bukkit.entity.Entity;
 import org.bukkit.inventory.ItemStack;
 
@@ -25,15 +26,13 @@ public class EntityManager {
         return null;
     }
 
-    public EntityBoss getBoss(Entity entity) {
+    public PlayerBoss getBoss(Entity entity) {
         final int id = entity.getEntityId();
 
         for (PlayerBoss playerBoss : PlayerBoss.getSpawnedBosses().values()) {
             if (!playerBoss.isDied()) {
-                EntityBoss boss = playerBoss.getBoss();
-
-                if (boss.getArmorStand().getId() == id || boss.getSlime().getId() == id) {
-                    return boss;
+                if (playerBoss.getArmorStand().getId() == id || playerBoss.getSlime().getId() == id) {
+                    return playerBoss;
                 }
             }
         }
@@ -42,7 +41,8 @@ public class EntityManager {
     }
 
     public boolean isBoss(ItemStack item) {
-        return false;
+        NBTItem nbt = NBTItem.from(item);
+        return nbt.hasKey(BossSettings.BOSS_SPAWN_EGG_NBT);
     }
 
     public boolean isBoss(Entity entity) {
