@@ -19,6 +19,7 @@ public class PlayerBoss implements Damageable {
     private static final Map<UUID, PlayerBoss> spawned_bosses = new ConcurrentHashMap<>(256);
 
     private Player player;
+    private UUID playerUniqueId;
     private EntityBoss boss;
     private double health;
 
@@ -27,6 +28,7 @@ public class PlayerBoss implements Damageable {
 
     public PlayerBoss(Player player, EntityBoss boss) {
         this.player = player;
+        this.playerUniqueId = player.getUniqueId();
         this.boss = boss;
         this.health = boss.getMaxHealth();
     }
@@ -89,6 +91,9 @@ public class PlayerBoss implements Damageable {
             slime.die();
             slime.getBukkitEntity().remove();
         }
+
+        // TODO Send rewards for this player.
+        getSpawnedBosses().remove(this.playerUniqueId);
     }
 
     public EntityBossArmorStand getArmorStand() {

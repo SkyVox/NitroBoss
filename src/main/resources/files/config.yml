@@ -1,6 +1,21 @@
 Settings:
   apply-effect-radius: 4
 
+Messages:
+  insufficient-permission: "&cVocê não tem permissão."
+  invalid-player: "&cEsse jogador não existe ou não está online."
+  has-active-boss: "&cVocê já possui um boss ativo, mate-o para gerar outro!"
+  boss-spawned: "&aBoss gerado! &cMate-o&a."
+  boss-cmd:
+    available-bosses: "&aBosses: (%available_bosses%)"
+    invalid-boss: "&cEsse boss não existe."
+    send-boss-sender: "&aVocê enviou um boss com sucesso para %player_name%."
+    send-boss-target: "&aVocê recebeu um boss de %sender_name%."
+    help:
+      - '&aGiveBoss Commands:'
+      - '&e/giveboss <boss> <jogador> &b- Enviar boss especifico para um jogador.'
+      - '&e/giveboss lista &b- Lista de bosses disponível.'
+
 Bosses:
   beast:
     display-name: "&bBeast &c%current_health%&7/&c%max_health%"
@@ -14,20 +29,22 @@ Bosses:
       DAMAGE:
         chance: 10 # 10% de chance desse efeito acontecer.
         damage: 0.5 # Sempre que for aplicado esse efeito, será descontado esse valor da vida do jogador.
+        play-thunder: true # Raio.
       POISON:
         chance: 5
         damage: 0.01
         # Duração do efeito.
-        time: 3 # Em segundos
+        duration: 3 # Em segundos
         amplifier: 2
       BLINDNESS:
         chance: 35
         damage: 0.01
-        time: 3 # Em segundos
+        duration: 3 # Em segundos
         amplifier: 2
       SLAP:
         chance: 15
         amplifier: 3
+        play-thunder: true
     boss-armor:
       0:
         type: "STICK"

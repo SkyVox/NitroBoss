@@ -1,12 +1,18 @@
-package com.skydhs.boss;
+package com.skydhs.boss.manager;
 
+import com.skydhs.boss.BossSettings;
+import com.skydhs.boss.Core;
+import com.skydhs.boss.FileUtil;
 import com.skydhs.boss.boss.EntityBoss;
 import com.skydhs.boss.boss.PlayerBoss;
 import com.skydhs.boss.nms.EntityBossArmorStand;
 import com.skydhs.boss.nms.EntityBossSlime;
 import com.skydhs.boss.utils.nbt.NBTItem;
+import org.apache.commons.lang.StringUtils;
 import org.bukkit.entity.Entity;
 import org.bukkit.inventory.ItemStack;
+
+import java.util.Map;
 
 public class EntityManager {
     private static EntityManager instance;
@@ -20,9 +26,22 @@ public class EntityManager {
         // Register custom entities.
         EntityBossArmorStand.register();
         EntityBossSlime.register();
+
+        new BossLoader().loadBosses(FileUtil.getFile("config").get());
     }
 
     public EntityBoss getBoss(ItemStack item) {
+        NBTItem nbti = NBTItem.from(item);
+        if (!nbti.hasKey(BossSettings.BOSS_SPAWN_EGG_NBT)) return null;
+        return getBossById(nbti.getString(BossSettings.BOSS_SPAWN_EGG_NBT));
+    }
+
+    public EntityBoss getBossById(final String id) {
+        for (Map.Entry<String, EntityBoss> entries : EntityBoss.getRegisteredBosses().entrySet()) {
+            if (StringUtils.equalsIgnoreCase(entries.getKey(), id)) {
+                return entries.getValue();
+            }
+        }
         return null;
     }
 
@@ -41,8 +60,8 @@ public class EntityManager {
     }
 
     public boolean isBoss(ItemStack item) {
-        NBTItem nbt = NBTItem.from(item);
-        return nbt.hasKey(BossSettings.BOSS_SPAWN_EGG_NBT);
+        NBTItem nbti = NBTItem.from(item);
+        return nbti.hasKey(BossSettings.BOSS_SPAWN_EGG_NBT);
     }
 
     public boolean isBoss(Entity entity) {

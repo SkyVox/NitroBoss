@@ -2,22 +2,23 @@ package com.skydhs.boss.boss;
 
 import com.skydhs.boss.ArmorPosition;
 import com.skydhs.boss.BossSettings;
-import com.skydhs.boss.EntityManager;
 import com.skydhs.boss.boss.effects.BossEffect;
+import com.skydhs.boss.manager.EntityManager;
 import net.minecraft.server.v1_8_R3.Vector3f;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.jetbrains.annotations.NotNull;
 
-import java.util.LinkedHashSet;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 public class EntityBoss extends Boss {
-    private static final Set<EntityBoss> registered_bosses = new LinkedHashSet<>(16);
+    private static final Map<String, EntityBoss> registered_bosses = new LinkedHashMap<>(16);
 
     // Boss information.
     private String displayName;
@@ -26,18 +27,18 @@ public class EntityBoss extends Boss {
     private Map<ArmorPosition, ItemStack> armor;
     private ItemStack spawnEgg;
 
-    public EntityBoss(String displayName, double maxHealth, BossEffect[] effects, Map<ArmorPosition, ItemStack> armor, ItemStack spawnEgg) {
+    public EntityBoss(@NotNull String name, String displayName, double maxHealth, BossEffect[] effects, Map<ArmorPosition, ItemStack> armor, ItemStack spawnEgg) {
         this.displayName = displayName;
         this.maxHealth = maxHealth;
         this.effects = effects;
         this.armor = armor;
         this.spawnEgg = spawnEgg;
 
-        addBoss();
+        addBoss(name);
     }
 
-    private void addBoss() {
-        EntityBoss.registered_bosses.add(this);
+    private void addBoss(@NotNull final String name) {
+        EntityBoss.registered_bosses.put(name, this);
     }
 
     public String getDisplayName() {
@@ -103,7 +104,7 @@ public class EntityBoss extends Boss {
         return spawnEgg;
     }
 
-    public static Set<EntityBoss> getRegisteredBosses() {
+    public static Map<String, EntityBoss> getRegisteredBosses() {
         return registered_bosses;
     }
 }

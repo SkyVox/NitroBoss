@@ -1,6 +1,8 @@
 package com.skydhs.boss;
 
+import com.skydhs.boss.commands.BossCmd;
 import com.skydhs.boss.listener.GeneralListener;
+import com.skydhs.boss.manager.EntityManager;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.ConsoleCommandSender;
@@ -30,6 +32,7 @@ public class Core extends JavaPlugin {
         // -- Load the plugin commands and listeners -- \\
         console.sendMessage("Loading command and listeners...");
         getServer().getPluginManager().registerEvents(new GeneralListener(), this);
+        getServer().getPluginCommand("giveboss").setExecutor(new BossCmd());
 
         console.sendMessage(ChatColor.YELLOW +  NAME + ChatColor.DARK_GRAY + "> " + ChatColor.GRAY + "has been enabled! Took " + getSpentTime(time) + "ms.");
         console.sendMessage("----------");

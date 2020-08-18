@@ -13,3 +13,9 @@ website: "http://www.skydhs.com"
 
 # Main class.
 main: com.skydhs.boss.Core
+
+# Plugin commands.
+commands:
+  giveboss:
+    description: "Send boss for an specific player or check all available bosses."
+    usage: "/giveboss"
