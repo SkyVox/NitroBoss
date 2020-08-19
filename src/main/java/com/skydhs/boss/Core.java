@@ -2,6 +2,7 @@ package com.skydhs.boss;
 
 import com.skydhs.boss.boss.PlayerBoss;
 import com.skydhs.boss.commands.BossCmd;
+import com.skydhs.boss.commands.BossSlayerSwordCmd;
 import com.skydhs.boss.listener.GeneralListener;
 import com.skydhs.boss.manager.EntityManager;
 import org.bukkit.Bukkit;
@@ -34,6 +35,7 @@ public class Core extends JavaPlugin {
         console.sendMessage("Loading command and listeners...");
         getServer().getPluginManager().registerEvents(new GeneralListener(), this);
         getServer().getPluginCommand("giveboss").setExecutor(new BossCmd());
+        getServer().getPluginCommand("givematadora").setExecutor(new BossSlayerSwordCmd());
 
         console.sendMessage(ChatColor.YELLOW +  NAME + ChatColor.DARK_GRAY + "> " + ChatColor.GRAY + "has been enabled! Took " + getSpentTime(time) + "ms.");
         console.sendMessage("----------");

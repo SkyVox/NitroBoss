@@ -4,6 +4,7 @@ import com.skydhs.boss.BossSettings;
 import com.skydhs.boss.FileUtil;
 import com.skydhs.boss.boss.EntityBoss;
 import com.skydhs.boss.boss.PlayerBoss;
+import com.skydhs.boss.manager.CustomSwordSlayer;
 import com.skydhs.boss.manager.EntityManager;
 import com.skydhs.boss.utils.nbt.NBTItem;
 import org.apache.commons.lang.StringUtils;
@@ -107,7 +108,25 @@ public class GeneralListener implements Listener {
         PlayerBoss boss = EntityManager.getInstance().getBoss(entity);
         if (boss == null) return;
 
+        double damage = event.getDamage();
+        ItemStack item = player.getItemInHand();
+
+        if (item != null && !item.getType().equals(Material.AIR)) {
+            CustomSwordSlayer sword = getSwordSlayer(NBTItem.from(item));
+
+            if (sword != null) {
+                damage = sword.getDamage();
+            }
+        }
+
         // Damage this entity.
-        boss.damage(event.getDamage(), player);
+        boss.damage(damage, player);
+    }
+
+    private CustomSwordSlayer getSwordSlayer(NBTItem nbti) {
+        if (nbti.hasKey(BossSettings.BOSS_SLAYER_SWORD_NBT)) {
+            return CustomSwordSlayer.getSword(nbti.getString(BossSettings.BOSS_SLAYER_SWORD_NBT));
+        }
+        return null;
     }
 }

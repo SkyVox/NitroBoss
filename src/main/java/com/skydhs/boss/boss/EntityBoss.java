@@ -130,7 +130,7 @@ public class EntityBoss extends Boss {
 
     @Override
     public ItemStack getSpawnEgg() {
-        return spawnEgg;
+        return spawnEgg.clone();
     }
 
     public static Map<String, EntityBoss> getRegisteredBosses() {

@@ -39,6 +39,16 @@ public class BossLoader {
         }
     }
 
+    protected void loadSwords(final FileConfiguration file) {
+        for (String str : file.getConfigurationSection("Boss-Sword-Slayer").getKeys(false)) {
+            ItemBuilder builder = ItemBuilder.get(file, "Boss-Sword-Slayer." + str);
+            double damage = file.getDouble("Boss-Sword-Slayer." + str + ".damage-cause");
+
+            // All load, then create new sword slayer.
+            new CustomSwordSlayer(str, builder.build(), damage);
+        }
+    }
+
     private BossEffect[] getEffects(final FileConfiguration file, String where, Set<String> section) {
         BossEffect[] ret = new BossEffect[section.size()];
 

@@ -16,6 +16,15 @@ Messages:
       - '&aGiveBoss Commands:'
       - '&e/giveboss <boss> <jogador> &b- Enviar boss especifico para um jogador.'
       - '&e/giveboss lista &b- Lista de bosses disponível.'
+  custom-sword-slayer-cmd:
+    available-swords: "&aEspadas: (%available_swords%)"
+    invalid-sword: "&cEssa espada não existe."
+    send-sword-sender: "&aVocê enviou uma espada com sucesso para %player_name%."
+    send-sword-target: "&aVocê recebeu uma espada de %sender_name%."
+    help:
+      - '&aGiveMatadora Commands:'
+      - '&e/givematadora <espada> <jogador> &b- Enviar espada matadora de boss para um jogador.'
+      - '&e/givematadora lista &b- Lista de espadas disponível.'
 
 Bosses:
   beast:
@@ -105,3 +114,17 @@ Bosses:
         - '&7esse boss!'
         - ''
         - '&7Dificuldade: &fFácil'
+
+# Espada matadora de boss.
+Boss-Sword-Slayer:
+  1:
+    type: "STICK"
+    name: "&cMatadora de Boss"
+    lore:
+      - ''
+      - '&7Com essa espada você'
+      - '&7mata o boss instantâneo.'
+    enchants:
+      - 'DAMAGE_ALL,5'
+    # Dano que essa espada causa no boss.
+    damage-cause: 150000

@@ -11,6 +11,12 @@ public class BossSettings {
     public static final String BOSS_SPAWN_EGG_NBT = "ENTITY_BOSS_EGG";
 
     /*
+     * NBT that are used on sword
+     * hit kill for bosses.
+     */
+    public static final String BOSS_SLAYER_SWORD_NBT = "BOSS_SWORD_SLAYER";
+
+    /*
      * Radius to get nearby entities.
      */
     public static final int APPLY_EFFECTS_RADIUS = get().getInt("Settings.apply-effect-radius");

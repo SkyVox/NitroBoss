@@ -19,3 +19,6 @@ commands:
   giveboss:
     description: "Send boss for an specific player or check all available bosses."
     usage: "/giveboss"
+  givematadora:
+    description: "Send the boss slayer sword for a specific player."
+    usage: "/givematadora"

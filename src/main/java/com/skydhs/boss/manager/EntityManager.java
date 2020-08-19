@@ -27,7 +27,9 @@ public class EntityManager {
         EntityBossArmorStand.register();
         EntityBossSlime.register();
 
-        new BossLoader().loadBosses(FileUtil.getFile("config").get());
+        BossLoader loader = new BossLoader();
+        loader.loadBosses(FileUtil.getFile("config").get());
+        loader.loadSwords(FileUtil.getFile("config").get());
     }
 
     public EntityBoss getBoss(ItemStack item) {
