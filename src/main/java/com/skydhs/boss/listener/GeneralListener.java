@@ -4,15 +4,20 @@ import com.skydhs.boss.BossSettings;
 import com.skydhs.boss.FileUtil;
 import com.skydhs.boss.boss.EntityBoss;
 import com.skydhs.boss.boss.PlayerBoss;
+import com.skydhs.boss.manager.EntityManager;
 import com.skydhs.boss.utils.nbt.NBTItem;
 import org.apache.commons.lang.StringUtils;
+import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.player.PlayerArmorStandManipulateEvent;
+import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 
@@ -36,12 +41,25 @@ public class GeneralListener implements Listener {
             if (PlayerBoss.getPlayerBoss(player) != null) {
                 player.sendMessage(FileUtil.get().getString("Messages.has-active-boss").asString());
             } else {
-                new PlayerBoss(player, boss);
+                Location location = event.getClickedBlock() == null ? player.getLocation() : event.getClickedBlock().getLocation().clone().add(0.5D, 1D, 0.5D);
+                new PlayerBoss(player, boss).spawnNMSBoss(location.getX(), location.getY(), location.getZ(), location.getYaw(), location.getPitch());
                 player.sendMessage(FileUtil.get().getString("Messages.boss-spawned").asString());
                 takeItem(player, NBTItem.from(item));
             }
 
             // Cancel this event, so the player will not be able to place the boss item on floor.
+            event.setCancelled(true);
+        }
+    }
+
+    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
+    public void onPlayerInteractAtEntity(PlayerInteractEntityEvent event) {
+        ItemStack item = event.getPlayer().getItemInHand();
+        if (item == null || item.getType().equals(Material.AIR)) return;
+
+        EntityBoss boss = getInstance().getBoss(item);
+
+        if (boss != null) {
             event.setCancelled(true);
         }
     }
@@ -69,6 +87,27 @@ public class GeneralListener implements Listener {
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    public void onPlayerArmorStandManipulate(PlayerArmorStandManipulateEvent event) {
+        ArmorStand entity = event.getRightClicked();
+        if (EntityManager.getInstance().isBoss(entity)) {
+            event.setCancelled(true);
+        }
+    }
+
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onEntityDamage(EntityDamageByEntityEvent event) {
+        if (event.getEntity() == null || event.getDamager() == null) return;
+        if (!(event.getEntity() instanceof ArmorStand)) return;
+        if (event.getEntity() instanceof Player) return;
+        ArmorStand entity = (ArmorStand) event.getEntity();
+        if (entity == null || entity.isDead()) return;
+        if (!(event.getDamager() instanceof Player)) return;
+
+        final Player player = (Player) event.getDamager();
+        PlayerBoss boss = EntityManager.getInstance().getBoss(entity);
+        if (boss == null) return;
+
+        // Damage this entity.
+        boss.damage(event.getDamage(), player);
     }
 }

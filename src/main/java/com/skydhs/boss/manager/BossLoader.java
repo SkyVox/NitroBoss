@@ -24,6 +24,9 @@ public class BossLoader {
         for (String str : file.getConfigurationSection("Bosses").getKeys(false)) {
             String displayName = ChatColor.translateAlternateColorCodes('&', file.getString("Bosses." + str + ".display-name"));
             double maxHealth = file.getDouble("Bosses." + str + ".health");
+            boolean small = file.contains("Bosses." + str + ".small") && file.getString("Bosses." + str + ".small").equalsIgnoreCase("true");
+            double playEffectChance = file.getDouble("Bosses." + str + ".chance-to-play-effects");
+            double healthRegenPercentage = file.getDouble("Bosses." + str + ".health-regen-per-sec");
             BossEffect[] effects = getEffects(file, "Bosses." + str + ".effects", file.getConfigurationSection("Bosses." + str + ".effects").getKeys(false));
             Map<ArmorPosition, ItemStack> armor = getArmor(file, "Bosses." + str + ".boss-armor", file.getConfigurationSection("Bosses." + str + ".boss-armor").getKeys(false));
             ItemBuilder builder = ItemBuilder.get(file, "Bosses." + str + ".spawn-egg");
@@ -32,7 +35,7 @@ public class BossLoader {
             nbti.setString(BossSettings.BOSS_SPAWN_EGG_NBT, str.toLowerCase());
 
             // All load, then create new boss.
-            new EntityBoss(str.toLowerCase(), displayName, maxHealth, effects, armor, nbti.getItem());
+            new EntityBoss(str.toLowerCase(), displayName, maxHealth, small, playEffectChance, healthRegenPercentage, effects, armor, nbti.getItem());
         }
     }
 

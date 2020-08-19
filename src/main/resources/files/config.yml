@@ -20,6 +20,16 @@ Bosses:
   beast:
     display-name: "&bBeast &c%current_health%&7/&c%max_health%"
     health: 150000
+    small: true
+    # A cada segundo vamos verificar
+    # se a chance é compatível para
+    # iniciar algum efeito.
+    chance-to-play-effects: 10
+    # Porcentagem que a vida do boss
+    # vai regenerar por segundo.
+    # (Isso só é chamado se o jogador
+    # ficar um tempo sem ataca-lo).
+    health-regen-per-sec: 1 # 1% da vida total.
     # Os efeitos listados abaixo,
     # são os efeitos disponíveis para
     # esse boss.
@@ -91,6 +101,6 @@ Bosses:
       lore:
         - ''
         - '&7Clique no chão para nascer'
-        - 'esse boss!'
+        - '&7esse boss!'
         - ''
         - '&7Dificuldade: &fFácil'

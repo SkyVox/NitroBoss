@@ -16,12 +16,12 @@ public class BossCmd implements CommandExecutor {
 
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
-        if (args.length <= 1) {
+        if (args.length <= 0) {
             for (String help : HELP) {
                 sender.sendMessage(help);
             }
             return true;
-        } else if (StringUtils.equalsIgnoreCase(args[0], "LIST")) {
+        } else if (StringUtils.equalsIgnoreCase(args[0], "LISTA")) {
             if (!sender.hasPermission("boss.admin")) {
                 sender.sendMessage(INSUFFICIENT_PERMISSION);
             } else {
@@ -33,7 +33,7 @@ public class BossCmd implements CommandExecutor {
                 return true;
             }
 
-            if (args.length <= 2) {
+            if (args.length <= 1) {
                 Bukkit.dispatchCommand(sender, "giveboss");
             } else {
                 EntityBoss boss = getBossById(args[0]);

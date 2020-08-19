@@ -65,7 +65,15 @@ public class EntityManager {
     }
 
     public boolean isBoss(Entity entity) {
-        return entity instanceof EntityBossArmorStand || entity instanceof EntityBossSlime;
+        final int id = entity.getEntityId();
+
+        for (PlayerBoss bosses : PlayerBoss.getSpawnedBosses().values()) {
+            if (!bosses.isDied()) {
+                if (bosses.getArmorStand().getId() == id || bosses.getSlime().getId() == id) return true;
+            }
+        }
+
+        return false;
     }
 
     public Core getCore() {

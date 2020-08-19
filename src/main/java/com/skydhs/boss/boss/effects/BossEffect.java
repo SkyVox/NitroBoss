@@ -1,11 +1,14 @@
 package com.skydhs.boss.boss.effects;
 
+import com.skydhs.boss.manager.EntityManager;
+import org.bukkit.Bukkit;
 import org.bukkit.Sound;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
+import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.Nullable;
 
@@ -71,16 +74,23 @@ public class BossEffect implements Effects {
             switch (type) {
                 case DAMAGE:
                     break;
-                case POISON:
-                    player.addPotionEffect(new PotionEffect(PotionEffectType.POISON, 20 * getEffectDuration(), getAmplifier()));
-                    break;
-                case BLINDNESS:
-                    player.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 20 * getEffectDuration(), getAmplifier()));
-                    break;
                 case SLAP:
-                    player.setVelocity(player.getLocation().getDirection().multiply(getAmplifier()));
-                    player.setVelocity(new Vector(player.getVelocity().getX(), 5D, player.getVelocity().getZ()));
+                    player.setVelocity(player.getLocation().getDirection().multiply(getAmplifier()/100));
+                    player.setVelocity(new Vector(player.getVelocity().getX(), getAmplifier(), player.getVelocity().getZ()));
                     player.playSound(player.getLocation(), Sound.SHOOT_ARROW, 5, 5);
+                    break;
+                case POISON:
+                case BLINDNESS:
+                    if (!Bukkit.isPrimaryThread()) {
+                        new BukkitRunnable() {
+                            @Override
+                            public void run() {
+                                apply(players, damager);
+                            }
+                        }.runTaskLater(EntityManager.getInstance().getCore(), 0L);
+                        return;
+                    }
+                    player.addPotionEffect(new PotionEffect(PotionEffectType.getByName(type.name().toUpperCase()), 20 * (getEffectDuration()+1), getAmplifier()));
                     break;
             }
 

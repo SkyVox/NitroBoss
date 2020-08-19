@@ -4,6 +4,7 @@ import com.skydhs.boss.ArmorPosition;
 import com.skydhs.boss.BossSettings;
 import com.skydhs.boss.boss.effects.BossEffect;
 import com.skydhs.boss.manager.EntityManager;
+import io.netty.util.internal.ConcurrentSet;
 import net.minecraft.server.v1_8_R3.Vector3f;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
@@ -12,24 +13,32 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class EntityBoss extends Boss {
     private static final Map<String, EntityBoss> registered_bosses = new LinkedHashMap<>(16);
+    private static final Set<UUID> animations = new ConcurrentSet<>();
+
+    // Random.
+    protected final Random R = new Random();
 
     // Boss information.
     private String displayName;
     private double maxHealth;
+    private boolean small;
+    private double playEffectChance;
+    private double healthRegenPercentage;
     private BossEffect[] effects;
     private Map<ArmorPosition, ItemStack> armor;
     private ItemStack spawnEgg;
 
-    public EntityBoss(@NotNull String name, String displayName, double maxHealth, BossEffect[] effects, Map<ArmorPosition, ItemStack> armor, ItemStack spawnEgg) {
+    public EntityBoss(@NotNull String name, String displayName, double maxHealth, boolean small, double playEffectChance, double healthRegenPercentage, BossEffect[] effects, Map<ArmorPosition, ItemStack> armor, ItemStack spawnEgg) {
         this.displayName = displayName;
         this.maxHealth = maxHealth;
+        this.small = small;
+        this.playEffectChance = playEffectChance/100;
+        this.healthRegenPercentage = healthRegenPercentage;
         this.effects = effects;
         this.armor = armor;
         this.spawnEgg = spawnEgg;
@@ -49,6 +58,18 @@ public class EntityBoss extends Boss {
         return maxHealth;
     }
 
+    public boolean isSmall() {
+        return small;
+    }
+
+    public double getPlayEffectChance() {
+        return playEffectChance;
+    }
+
+    public double getHealthRegenPercentage() {
+        return healthRegenPercentage;
+    }
+
     public BossEffect[] getEffects() {
         return effects;
     }
@@ -59,39 +80,47 @@ public class EntityBoss extends Boss {
         final Location location = boss.getBossLocation();
         int radius = BossSettings.APPLY_EFFECTS_RADIUS;
         Set<Entity> entities = location.getWorld().getNearbyEntities(location, radius, radius, radius).stream().filter(Player.class::isInstance).collect(Collectors.toSet());
-
-        int[] positions = new int[] { 360, 0 };
-        new BukkitRunnable() {
-            @Override
-            public void run() {
-                if (boss.isDied()) {
-                    cancel();
-                } else {
-                    if (positions[1] >= 35) {
-                        if (positions[0] >= 360) {
-                            positions[0] = 0;
-                            positions[1] = 0;
-                            cancel();
-                            return;
-                        }
-                        positions[0]+=1;
-                    } else {
-                        positions[1]++;
-                        positions[0]--;
-                    }
-
-                    // Play the arm animation.
-                    boss.getArmorStand().setRightArmPose(new Vector3f(positions[0], 0, 0));
-                }
-            }
-        }.runTaskTimerAsynchronously(EntityManager.getInstance().getCore(), 1, 1);
+        boolean animate = false;
 
         if (entities != null && entities.size() > 0) {
             for (BossEffect effect : getEffects()) {
                 if (effect.isLuck()) {
+                    if (!animate) animate = true;
                     effect.apply(entities, boss.getArmorStand().getBukkitEntity());
                 }
             }
+        }
+
+        if (animate && (animations.stream().filter(uuid -> uuid.equals(boss.getPlayerUniqueId())).findFirst().orElse(null) == null)) {
+            animations.add(boss.getPlayerUniqueId());
+
+            int[] positions = new int[] { 360, 0 };
+            new BukkitRunnable() {
+                @Override
+                public void run() {
+                    if (boss.isDied()) {
+                        animations.remove(boss.getPlayerUniqueId());
+                        cancel();
+                    } else {
+                        if (positions[1] >= 35) {
+                            if (positions[0] >= 360) {
+                                positions[0] = 0;
+                                positions[1] = 0;
+                                animations.remove(boss.getPlayerUniqueId());
+                                cancel();
+                                return;
+                            }
+                            positions[0]+=1;
+                        } else {
+                            positions[1]++;
+                            positions[0]--;
+                        }
+
+                        // Play the arm animation.
+                        boss.getArmorStand().setRightArmPose(new Vector3f(positions[0], 0, 0));
+                    }
+                }
+            }.runTaskTimerAsynchronously(EntityManager.getInstance().getCore(), 1, 1);
         }
     }
 

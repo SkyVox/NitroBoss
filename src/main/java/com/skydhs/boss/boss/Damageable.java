@@ -1,14 +1,19 @@
 package com.skydhs.boss.boss;
 
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.Player;
+import org.jetbrains.annotations.Nullable;
+
 public interface Damageable {
 
     /**
      * Causes damage on the current boss.
      *
      * @param damage Amount of taken damage.
+     * @param damager Who damaged the entity.
      * @return If entity has died.
      */
-    boolean damage(double damage);
+    boolean damage(double damage, @Nullable Player damager);
 
     /**
      * Get boss current health.
