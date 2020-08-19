@@ -1,5 +1,6 @@
 Settings:
   apply-effect-radius: 4
+  regen-health-after: 60 # Em segundos.
 
 Messages:
   insufficient-permission: "&cVocê não tem permissão."

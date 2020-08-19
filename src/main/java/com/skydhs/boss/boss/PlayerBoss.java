@@ -1,5 +1,6 @@
 package com.skydhs.boss.boss;
 
+import com.skydhs.boss.BossSettings;
 import com.skydhs.boss.manager.EntityManager;
 import com.skydhs.boss.nms.EntityBossArmorStand;
 import com.skydhs.boss.nms.EntityBossSlime;
@@ -22,6 +23,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
 
 public class PlayerBoss implements Damageable {
     private static final Map<UUID, PlayerBoss> spawned_bosses = new ConcurrentHashMap<>(256);
@@ -30,6 +32,7 @@ public class PlayerBoss implements Damageable {
     private UUID playerUniqueId;
     private EntityBoss boss;
     private double health;
+    private long lastHit = -1;
 
     private EntityBossArmorStand armorStand;
     private EntityBossSlime slime;
@@ -68,6 +71,9 @@ public class PlayerBoss implements Damageable {
 
     @Override
     public boolean damage(double damage, @Nullable Player damager) {
+        // Refresh last hit.
+        this.lastHit = System.currentTimeMillis();
+
         health = damage >= health ? 0 : health - damage;
         this.updateDisplayName();
 
@@ -99,6 +105,16 @@ public class PlayerBoss implements Damageable {
         this.updateDisplayName();
     }
 
+    public long getLastHit() {
+        return lastHit;
+    }
+
+    public long getLastHitInSeconds() {
+        if (lastHit <= -1) return -1;
+        final long result = System.currentTimeMillis() - lastHit;
+        return TimeUnit.SECONDS.convert(result, TimeUnit.MILLISECONDS);
+    }
+
     public boolean isDied() {
         boolean ret = getHealth() <= 0 || (armorStand != null && armorStand.dead) || (slime != null && slime.dead);
         // If task isn't equals to -1, we should stop it.
@@ -124,7 +140,10 @@ public class PlayerBoss implements Damageable {
             Bukkit.getScheduler().cancelTask(taskId);
         }
 
-        // TODO Send rewards for this player.
+        if (damager != null) {
+            // TODO Send rewards for this player.
+        }
+
         getSpawnedBosses().remove(this.playerUniqueId);
     }
 
@@ -208,10 +227,16 @@ public class PlayerBoss implements Damageable {
 
     private void startTask() {
         taskId = Bukkit.getScheduler().runTaskTimerAsynchronously(EntityManager.getInstance().getCore(), () -> {
-            double chance = getBoss().getPlayEffectChance();
+            long lastHit = getLastHitInSeconds();
 
-            if (chance >= 100 || getBoss().R.nextDouble() < chance) {
-                getBoss().applyEffect(this);
+            if (lastHit == -1 || lastHit >= BossSettings.REGEN_HEALTH_AFTER) {
+                this.lastHit = -1;
+                resetHealth(getBoss().getHealthRegenPercentage());
+            } else {
+                double chance = getBoss().getPlayEffectChance();
+                if (chance >= 100 || getBoss().R.nextDouble() < chance) {
+                    getBoss().applyEffect(this);
+                }
             }
         }, 20 * 5, 20*2).getTaskId();
     }

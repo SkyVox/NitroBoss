@@ -14,4 +14,10 @@ public class BossSettings {
      * Radius to get nearby entities.
      */
     public static final int APPLY_EFFECTS_RADIUS = get().getInt("Settings.apply-effect-radius");
+
+    /*
+     * Regen boss health after some time
+     * if boss isn't being attacked.
+     */
+    public static final int REGEN_HEALTH_AFTER = get().getInt("Settings.regen-health-after");
 }
