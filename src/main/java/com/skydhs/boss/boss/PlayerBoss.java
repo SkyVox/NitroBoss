@@ -4,6 +4,7 @@ import com.skydhs.boss.BossSettings;
 import com.skydhs.boss.manager.EntityManager;
 import com.skydhs.boss.nms.EntityBossArmorStand;
 import com.skydhs.boss.nms.EntityBossSlime;
+import com.skydhs.boss.rewards.BossRewards;
 import net.minecraft.server.v1_8_R3.NBTTagCompound;
 import net.minecraft.server.v1_8_R3.World;
 import org.apache.commons.lang.StringUtils;
@@ -141,7 +142,11 @@ public class PlayerBoss implements Damageable {
         }
 
         if (damager != null) {
-            // TODO Send rewards for this player.
+            if (getBoss().getRewards() != null) {
+                for (BossRewards reward : getBoss().getRewards()) {
+                    reward.sendReward(damager);
+                }
+            }
         }
 
         getSpawnedBosses().remove(this.playerUniqueId);

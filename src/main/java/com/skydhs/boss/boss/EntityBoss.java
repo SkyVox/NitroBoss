@@ -4,6 +4,7 @@ import com.skydhs.boss.ArmorPosition;
 import com.skydhs.boss.BossSettings;
 import com.skydhs.boss.boss.effects.BossEffect;
 import com.skydhs.boss.manager.EntityManager;
+import com.skydhs.boss.rewards.BossRewards;
 import io.netty.util.internal.ConcurrentSet;
 import net.minecraft.server.v1_8_R3.Vector3f;
 import org.bukkit.Location;
@@ -12,6 +13,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -29,16 +31,18 @@ public class EntityBoss extends Boss {
     private boolean small;
     private double playEffectChance;
     private double healthRegenPercentage;
+    private BossRewards[] rewards;
     private BossEffect[] effects;
     private Map<ArmorPosition, ItemStack> armor;
     private ItemStack spawnEgg;
 
-    public EntityBoss(@NotNull String name, String displayName, double maxHealth, boolean small, double playEffectChance, double healthRegenPercentage, BossEffect[] effects, Map<ArmorPosition, ItemStack> armor, ItemStack spawnEgg) {
+    public EntityBoss(@NotNull String name, String displayName, double maxHealth, boolean small, double playEffectChance, double healthRegenPercentage, @Nullable BossRewards[] rewards, BossEffect[] effects, Map<ArmorPosition, ItemStack> armor, ItemStack spawnEgg) {
         this.displayName = displayName;
         this.maxHealth = maxHealth;
         this.small = small;
         this.playEffectChance = playEffectChance/100;
         this.healthRegenPercentage = healthRegenPercentage;
+        this.rewards = rewards;
         this.effects = effects;
         this.armor = armor;
         this.spawnEgg = spawnEgg;
@@ -68,6 +72,10 @@ public class EntityBoss extends Boss {
 
     public double getHealthRegenPercentage() {
         return healthRegenPercentage;
+    }
+
+    public BossRewards[] getRewards() {
+        return rewards;
     }
 
     public BossEffect[] getEffects() {

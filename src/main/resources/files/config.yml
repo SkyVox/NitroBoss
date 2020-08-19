@@ -114,6 +114,23 @@ Bosses:
         - '&7esse boss!'
         - ''
         - '&7Dificuldade: &fFácil'
+    rewards:
+      1:
+        chance: 100
+        commands:
+          - '[PLAYER]/c'
+          - '[CONSOLE]/whisper %player_name% Boss foi morto.'
+        messages:
+          - '&7----------'
+          - '&fVocê matou o &bBeast&f!'
+          - '&7----------'
+        items:
+          1:
+            type: "DIAMOND"
+            name: "&bDiamante"
+            lore:
+              - ''
+              - '&cYey! Você matou o &bBeast &c%player_name%'
 
 # Espada matadora de boss.
 Boss-Sword-Slayer:
