@@ -1,5 +1,6 @@
 package com.skydhs.boss;
 
+import com.skydhs.boss.boss.PlayerBoss;
 import com.skydhs.boss.commands.BossCmd;
 import com.skydhs.boss.listener.GeneralListener;
 import com.skydhs.boss.manager.EntityManager;
@@ -43,7 +44,8 @@ public class Core extends JavaPlugin {
         console.sendMessage("----------");
         console.sendMessage(ChatColor.GRAY + "Disabling " + ChatColor.YELLOW +  NAME + ChatColor.DARK_GRAY + "> " + ChatColor.GRAY + "Version: " + ChatColor.YELLOW + VERSION + ChatColor.GRAY + "!");
 
-        // TODO, Unregister bosses.
+        // Remove all bosses from this world.
+        PlayerBoss.getSpawnedBosses().values().forEach(boss -> boss.die(null));
 
         console.sendMessage(ChatColor.YELLOW +  NAME + ChatColor.DARK_GRAY + "> " + ChatColor.GRAY + "has been disabled!");
         console.sendMessage("----------");
