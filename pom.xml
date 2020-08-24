@@ -6,7 +6,7 @@
 
     <groupId>com.skydhs</groupId>
     <artifactId>NitroBoss</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.1-Release</version>
 
     <!-- Plugin information -->
     <name>NitroBoss</name>
