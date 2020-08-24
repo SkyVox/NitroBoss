@@ -17,6 +17,7 @@ import org.bukkit.craftbukkit.v1_8_R3.inventory.CraftItemStack;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.CreatureSpawnEvent;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.jetbrains.annotations.Nullable;
@@ -124,6 +125,18 @@ public class PlayerBoss implements Damageable {
             getSpawnedBosses().remove(this.playerUniqueId);
         }
         return ret;
+    }
+
+    public void dieAndSendSpawnEgg(@Nullable Player damager) {
+        EntityBoss boss = getBoss();
+
+        if (boss != null && this.player != null) {
+            ItemStack item = boss.getSpawnEgg();
+            this.player.getInventory().addItem(item);
+        }
+
+        // Die.
+        this.die(damager);
     }
 
     public void die(@Nullable Player damager) {

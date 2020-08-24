@@ -47,7 +47,7 @@ public class Core extends JavaPlugin {
         console.sendMessage(ChatColor.GRAY + "Disabling " + ChatColor.YELLOW +  NAME + ChatColor.DARK_GRAY + "> " + ChatColor.GRAY + "Version: " + ChatColor.YELLOW + VERSION + ChatColor.GRAY + "!");
 
         // Remove all bosses from this world.
-        PlayerBoss.getSpawnedBosses().values().forEach(boss -> boss.die(null));
+        PlayerBoss.getSpawnedBosses().values().forEach(boss -> boss.dieAndSendSpawnEgg(null));
 
         console.sendMessage(ChatColor.YELLOW +  NAME + ChatColor.DARK_GRAY + "> " + ChatColor.GRAY + "has been disabled!");
         console.sendMessage("----------");
