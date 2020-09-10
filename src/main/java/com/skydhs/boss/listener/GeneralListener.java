@@ -95,7 +95,7 @@ public class GeneralListener implements Listener {
         }
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.HIGHEST)
     public void onEntityDamage(EntityDamageByEntityEvent event) {
         if (event.getEntity() == null || event.getDamager() == null) return;
         if (!(event.getEntity() instanceof ArmorStand)) return;
