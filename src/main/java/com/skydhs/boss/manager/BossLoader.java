@@ -35,12 +35,13 @@ public class BossLoader {
             BossEffect[] effects = getEffects(file, "Bosses." + str + ".effects", file.getConfigurationSection("Bosses." + str + ".effects").getKeys(false));
             Map<ArmorPosition, ItemStack> armor = getArmor(file, "Bosses." + str + ".boss-armor", file.getConfigurationSection("Bosses." + str + ".boss-armor").getKeys(false));
             ItemBuilder builder = ItemBuilder.get(file, "Bosses." + str + ".spawn-egg");
+            boolean useCustomSword = file.contains("Bosses." + str + ".use-custom-sword") && file.getString("Bosses." + str + ".use-custom-sword").equalsIgnoreCase("true");
 
             NBTItem nbti = NBTItem.from(builder.build());
             nbti.setString(BossSettings.BOSS_SPAWN_EGG_NBT, str.toLowerCase());
 
             // All load, then create new boss.
-            new EntityBoss(str.toLowerCase(), displayName, maxHealth, small, playEffectChance, healthRegenPercentage, rewards, effects, armor, nbti.getItem());
+            new EntityBoss(str.toLowerCase(), displayName, maxHealth, small, playEffectChance, healthRegenPercentage, rewards, effects, armor, nbti.getItem(), useCustomSword);
         }
     }
 

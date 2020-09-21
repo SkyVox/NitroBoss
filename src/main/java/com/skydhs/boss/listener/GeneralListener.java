@@ -110,13 +110,20 @@ public class GeneralListener implements Listener {
 
         double damage = event.getDamage();
         ItemStack item = player.getItemInHand();
+        boolean customSword = false;
 
         if (item != null && !item.getType().equals(Material.AIR)) {
             CustomSwordSlayer sword = getSwordSlayer(NBTItem.from(item));
 
             if (sword != null) {
                 damage = sword.getDamage();
+                customSword = true;
             }
+        }
+
+        if (boss.getBoss().isUseCustomSword() && !customSword) {
+            event.setDamage(0D);
+            return;
         }
 
         // Damage this entity.

@@ -36,7 +36,10 @@ public class EntityBoss extends Boss {
     private Map<ArmorPosition, ItemStack> armor;
     private ItemStack spawnEgg;
 
-    public EntityBoss(@NotNull String name, String displayName, double maxHealth, boolean small, double playEffectChance, double healthRegenPercentage, @Nullable BossRewards[] rewards, BossEffect[] effects, Map<ArmorPosition, ItemStack> armor, ItemStack spawnEgg) {
+    // Boss killing information.
+    private boolean useCustomSword;
+
+    public EntityBoss(@NotNull String name, String displayName, double maxHealth, boolean small, double playEffectChance, double healthRegenPercentage, @Nullable BossRewards[] rewards, BossEffect[] effects, Map<ArmorPosition, ItemStack> armor, ItemStack spawnEgg, boolean useCustomSword) {
         this.displayName = displayName;
         this.maxHealth = maxHealth;
         this.small = small;
@@ -46,6 +49,7 @@ public class EntityBoss extends Boss {
         this.effects = effects;
         this.armor = armor;
         this.spawnEgg = spawnEgg;
+        this.useCustomSword = useCustomSword;
 
         addBoss(name);
     }
@@ -139,6 +143,10 @@ public class EntityBoss extends Boss {
     @Override
     public ItemStack getSpawnEgg() {
         return spawnEgg.clone();
+    }
+
+    public boolean isUseCustomSword() {
+        return useCustomSword;
     }
 
     public static Map<String, EntityBoss> getRegisteredBosses() {
