@@ -1,9 +1,9 @@
 package com.skydhs.boss;
 
-import com.skydhs.boss.boss.PlayerBoss;
 import com.skydhs.boss.commands.BossCmd;
 import com.skydhs.boss.commands.BossSlayerSwordCmd;
 import com.skydhs.boss.listener.GeneralListener;
+import com.skydhs.boss.listener.PlayerQuitListener;
 import com.skydhs.boss.manager.EntityManager;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -34,6 +34,7 @@ public class Core extends JavaPlugin {
         // -- Load the plugin commands and listeners -- \\
         console.sendMessage("Loading command and listeners...");
         getServer().getPluginManager().registerEvents(new GeneralListener(), this);
+        getServer().getPluginManager().registerEvents(new PlayerQuitListener(), this);
         getServer().getPluginCommand("giveboss").setExecutor(new BossCmd());
         getServer().getPluginCommand("givematadora").setExecutor(new BossSlayerSwordCmd());
 
@@ -47,7 +48,7 @@ public class Core extends JavaPlugin {
         console.sendMessage(ChatColor.GRAY + "Disabling " + ChatColor.YELLOW +  NAME + ChatColor.DARK_GRAY + "> " + ChatColor.GRAY + "Version: " + ChatColor.YELLOW + VERSION + ChatColor.GRAY + "!");
 
         // Remove all bosses from this world.
-        PlayerBoss.getSpawnedBosses().values().forEach(boss -> boss.dieAndSendSpawnEgg(null));
+//        PlayerBoss.getSpawnedBosses().values().forEach(boss -> boss.dieAndSendSpawnEgg(null));
 
         console.sendMessage(ChatColor.YELLOW +  NAME + ChatColor.DARK_GRAY + "> " + ChatColor.GRAY + "has been disabled!");
         console.sendMessage("----------");
